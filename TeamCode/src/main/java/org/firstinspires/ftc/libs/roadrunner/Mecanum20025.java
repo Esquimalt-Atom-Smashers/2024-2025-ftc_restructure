@@ -39,7 +39,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.libs.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.libs.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.libs.roadrunner.messages.MecanumLocalizerInputsMessage;
@@ -51,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class Mecanum20025 {
+public class Mecanum20025 {
     public static class Params {
         // drive model parameters
         public double inPerTick = 0.0007019073876;
@@ -203,22 +202,22 @@ public final class Mecanum20025 {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront = hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.FRONT_LEFT_MOTOR_NAME);
-        leftBack = hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.BACK_LEFT_MOTOR_NAME);
-        rightBack = hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.BACK_RIGHT_MOTOR_NAME);
-        rightFront = hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.FRONT_RIGHT_MOTOR_NAME);
+        leftFront = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.FRONT_LEFT_MOTOR_NAME);
+        leftBack = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.BACK_LEFT_MOTOR_NAME);
+        rightBack = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.BACK_RIGHT_MOTOR_NAME);
+        rightFront = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.FRONT_RIGHT_MOTOR_NAME);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(Constants.DriveConstants.FRONT_LEFT_MOTOR_DIRECTION);
-        leftBack.setDirection(Constants.DriveConstants.BACK_LEFT_MOTOR_DIRECTION);
-        rightBack.setDirection(Constants.DriveConstants.BACK_RIGHT_MOTOR_DIRECTION);
-        rightFront.setDirection(Constants.DriveConstants.FRONT_RIGHT_MOTOR_DIRECTION);
+        leftFront.setDirection(RoadrunnerConstants.FRONT_LEFT_MOTOR_DIRECTION);
+        leftBack.setDirection(RoadrunnerConstants.BACK_LEFT_MOTOR_DIRECTION);
+        rightBack.setDirection(RoadrunnerConstants.BACK_RIGHT_MOTOR_DIRECTION);
+        rightFront.setDirection(RoadrunnerConstants.FRONT_RIGHT_MOTOR_DIRECTION);
 
-        lazyImu = new LazyImu(hardwareMap, Constants.DriveConstants.IMU_NAME, Constants.DriveConstants.IMU_PARAMETERS_ROADRUNNER);
+        lazyImu = new LazyImu(hardwareMap, RoadrunnerConstants.IMU_NAME, RoadrunnerConstants.IMU_PARAMETERS_ROADRUNNER);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 

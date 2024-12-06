@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.libs.roadrunner.messages.ThreeDeadWheelInputsMessage;
-import org.firstinspires.ftc.teamcode.Constants;
 
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
@@ -35,13 +34,13 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     private boolean initialized;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.LEFT_ENCODER_NAME)));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.RIGHT_ENCODER_NAME)));
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, Constants.DriveConstants.CENTER_ENCODER_NAME)));
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.LEFT_ENCODER_NAME)));
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.RIGHT_ENCODER_NAME)));
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.CENTER_ENCODER_NAME)));
 
-        par0.setDirection(Constants.DriveConstants.LEFT_ENCODER_DIRECTION);
-        par1.setDirection(Constants.DriveConstants.RIGHT_ENCODER_DIRECTION);
-        perp.setDirection(Constants.DriveConstants.CENTER_ENCODER_DIRECTION);
+        par0.setDirection(RoadrunnerConstants.LEFT_ENCODER_DIRECTION);
+        par1.setDirection(RoadrunnerConstants.RIGHT_ENCODER_DIRECTION);
+        perp.setDirection(RoadrunnerConstants.CENTER_ENCODER_DIRECTION);
 
         this.inPerTick = inPerTick;
 
