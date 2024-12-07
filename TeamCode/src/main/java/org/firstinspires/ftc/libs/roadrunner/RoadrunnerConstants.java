@@ -27,10 +27,10 @@ public class RoadrunnerConstants {
             )
     );
 
-//    public static final RevHubOrientationOnRobot IMU_PARAMETERS_ROADRUNNER = new RevHubOrientationOnRobot(
-//            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-//            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-//    );
+    public static final RevHubOrientationOnRobot IMU_PARAMETERS_ROADRUNNER = new RevHubOrientationOnRobot(
+            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+    );
 
     public static final double DEADZONE = 0.1;
 }
