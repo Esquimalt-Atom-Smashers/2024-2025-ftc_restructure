@@ -32,12 +32,11 @@ package org.firstinspires.ftc.teamcode.opModes;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.libs.roadrunner.Mecanum20025;
+import org.xmlpull.v1.sax2.Driver;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -54,13 +53,11 @@ import org.firstinspires.ftc.libs.roadrunner.Mecanum20025;
  */
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Basic: Iterative OpMode", group="Iterative OpMode")
-@Disabled
-public class TeleOp extends OpMode
+
+public class ExperimentalTeleOp extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
     private Mecanum20025 driveSubsystem;
 
     /*
@@ -97,8 +94,6 @@ public class TeleOp extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-        double leftPower;
-        double rightPower;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
@@ -109,10 +104,14 @@ public class TeleOp extends OpMode
         double strafe = -gamepad1.left_stick_x;
         double turn  =  gamepad1.right_stick_x;
 
+        driveSubsystem.updatePoseEstimate();
+        Pose2d updatedPose = new Pose2d(driveSubsystem.pose.position.x,driveSubsystem.pose.position.y,driveSubsystem.pose.heading.toDouble());;
         driveSubsystem.setDrivePowers(new PoseVelocity2d(new Vector2d(drive,strafe), turn));
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+        telemetry.addData("X_Coordinate", driveSubsystem.pose.position.x);
+        telemetry.addData("Y_Coordinate", driveSubsystem.pose.position.y);
+        telemetry.addData("heading", driveSubsystem.pose.heading.toDouble());
     }
 
     /*

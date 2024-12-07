@@ -47,7 +47,7 @@ public class Robot {
         CommandScheduler.getInstance().cancelAll();
 
         //Driver Controls
-
+/*
         RunCommand defaultDriveCommand = new RunCommand(() -> driveSubsystem.drive(driverGamepad.getLeftY(), driverGamepad.getLeftX(), driverGamepad.getRightX()));
         defaultDriveCommand.addRequirements(driveSubsystem);
         driveSubsystem.setDefaultCommand(defaultDriveCommand);
@@ -64,7 +64,8 @@ public class Robot {
         setFieldCentric.whenActive(() -> driveSubsystem.setFieldCentricOnOff());
         */
 
-    }
+    }}
+    /*
     public void run() {
         CommandScheduler.getInstance().run();
         opMode.telemetry.addData("Linear Slide Position:", linearSlideSubsystem.getCurrentPosition());
@@ -73,3 +74,4 @@ public class Robot {
         opMode.telemetry.update();
     }
 }
+*/
