@@ -33,4 +33,6 @@ public class RoadrunnerConstants {
     );
 
     public static final double DEADZONE = 0.1;
+
+    public  static double INCH_TO_TILE = 24;
 }

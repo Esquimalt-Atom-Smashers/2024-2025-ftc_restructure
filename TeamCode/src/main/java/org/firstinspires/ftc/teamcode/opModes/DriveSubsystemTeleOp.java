@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.button.Trigger;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.libs.roadrunner.RoadrunnerConstants;
@@ -15,9 +19,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.*;
 import org.firstinspires.ftc.teamcode.utils.GamepadUtils;
 
-@TeleOp(name = "TeleOp", group = "Real")
-public class MainOpMode extends OpMode {
+@TeleOp(name = "DriveSubsystemTeleOp", group = "Real")
+public class DriveSubsystemTeleOp extends OpMode {
     Robot robot;
+    DriveSubsystem driveSubsystem;
+    private GamepadEx driverGamepad;
+    private ElapsedTime autoTimer;
 
     public final double DEADZONE = 0.1;
 
@@ -28,11 +35,26 @@ public class MainOpMode extends OpMode {
 
     @Override
     public void loop() {
+        driverGamepad = new GamepadEx(this.gamepad1);
+
         double drive = -gamepad1.left_stick_y;
         double strafe = -gamepad1.left_stick_x;
         double turn  =  gamepad1.right_stick_x;
 
-        driveSub
+        Trigger speedVariationTrigger = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER));
+        speedVariationTrigger.whenActive(() -> driveSubsystem.setSpeedMultiplier(0.2));
+        speedVariationTrigger.whenInactive(() -> driveSubsystem.setSpeedMultiplier(1));
+
+        Trigger setFieldCentric = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.B));
+        setFieldCentric.whenActive(() -> driveSubsystem.setFieldCentricOnOff());
+
+        Trigger resetGyro = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.BACK));
+        resetGyro.whenActive(() -> driveSubsystem.resetGyro());
+
+        autoTimer = new ElapsedTime();
+        driveSubsystem.drive(drive, strafe, turn);
+        telemetry.addData("is fieldCentric", driveSubsystem.getIsFieldCentric());
+        telemetry.addData("speed multiplier", driveSubsystem.getSpeedMultiplier());
     }
 
     public class DriveSubsystem extends SubsystemBase {
@@ -142,6 +164,15 @@ public class MainOpMode extends OpMode {
 
         public boolean getIsFieldCentric() {
             return fieldCentric;
+        }
+
+        public void autoModeDrive(double forward, double strafe, double rotate, double duration){
+            driveSubsystem.drive(forward, strafe, rotate);
+            autoTimer.reset();
+
+            if( autoTimer.seconds() == duration) {
+                driveSubsystem.drive(0, 0, 0);
+            }
         }
     }
 }
