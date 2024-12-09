@@ -27,7 +27,7 @@ public class Robot {
 
     private final DriveSubsystem driveSubsystem;
 
-    public Robot(OpMode opMode, Pose2d pose2D) {
+    public Robot(OpMode opMode) {
         this.opMode = opMode;
 
         driverGamepad = new GamepadEx(opMode.gamepad1);
