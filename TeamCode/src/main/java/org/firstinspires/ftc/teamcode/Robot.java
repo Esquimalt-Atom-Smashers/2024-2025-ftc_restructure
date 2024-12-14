@@ -25,7 +25,7 @@ public class Robot {
     private final GamepadEx driverGamepad;
     private final GamepadEx operatorGamepad;
 
-    private final DriveSubsystem driveSubsystem;
+    public final DriveSubsystem driveSubsystem;
 
     public Robot(OpMode opMode) {
         this.opMode = opMode;
@@ -76,6 +76,9 @@ public class Robot {
 
     public void run() {
         CommandScheduler.getInstance().run();
+        opMode.telemetry.addData("FieldCentric", driveSubsystem.getIsFieldCentric());
+        opMode.telemetry.addData("SpeedMultiplier", driveSubsystem.getSpeedMultiplier());
+        driveSubsystem.printData();
         opMode.telemetry.update();
     }
 }

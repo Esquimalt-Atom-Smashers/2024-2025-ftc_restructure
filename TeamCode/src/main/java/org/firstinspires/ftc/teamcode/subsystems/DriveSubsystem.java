@@ -174,13 +174,10 @@ public class DriveSubsystem extends SubsystemBase {
         return fieldCentric;
     }
 
-    public void autoModeDrive(double forward, double strafe, double rotate, double duration){
-        this.drive(forward, strafe, rotate);
-        autoTimer.reset();
-
-        if( autoTimer.seconds() == duration) {
-            this.drive(0, 0, 0);
-        }
+    public void printData(){
+        telemetry.addData("x", roadrunnerDrive.pose.position.x);
+        telemetry.addData("y", roadrunnerDrive.pose.position.y);
+        telemetry.addData("heading", getHeading());
     }
 }
 

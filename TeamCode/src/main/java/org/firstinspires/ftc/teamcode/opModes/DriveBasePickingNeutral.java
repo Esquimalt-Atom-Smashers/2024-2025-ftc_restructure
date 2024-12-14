@@ -17,8 +17,8 @@ import org.firstinspires.ftc.libs.roadrunner.RoadrunnerConstants;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.libs.roadrunner.Mecanum20025;
 
-@Autonomous(name="Drive_base_Picking_Neutral_Block", group = "Real")
-public class Drive_Base_Picking_Neutral_Block extends LinearOpMode {
+@Autonomous(name="DriveBasePickingNeutral", group = "Real")
+public class DriveBasePickingNeutral extends LinearOpMode {
     Mecanum20025 roadrunnerDrive;
 
     class roadrunnerPoseTele implements Action {
@@ -47,7 +47,6 @@ public class Drive_Base_Picking_Neutral_Block extends LinearOpMode {
 
         Pose2d initialPose = new Pose2d(-3 * RoadrunnerConstants.INCH_TO_TILE, 1.5 * RoadrunnerConstants.INCH_TO_TILE, Math.toRadians(90));
         Mecanum20025 roadrunnerDrive = new Mecanum20025(hardwareMap, initialPose);
-
         Pose2d updatedPose = new Pose2d(roadrunnerDrive.pose.position.x, roadrunnerDrive.pose.position.y, roadrunnerDrive.pose.heading.toDouble());
 
         TrajectoryActionBuilder getNeutralBlock1 = roadrunnerDrive.actionBuilder(initialPose)
@@ -76,6 +75,8 @@ public class Drive_Base_Picking_Neutral_Block extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             robot.run();
+            roadrunnerDrive.updatePoseEstimate();
+            updatedPose = new Pose2d(roadrunnerDrive.pose.position.x, roadrunnerDrive.pose.position.y, roadrunnerDrive.pose.heading.toDouble());
 
             Actions.runBlocking(
                     new ParallelAction(
