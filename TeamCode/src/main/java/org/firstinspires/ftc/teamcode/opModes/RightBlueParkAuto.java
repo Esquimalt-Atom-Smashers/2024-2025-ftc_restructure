@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +24,7 @@ public class RightBlueParkAuto extends LinearOpMode{
     private DcMotorEx frontLeftMotor;
     private DcMotorEx backRightMotor;
     private DcMotorEx backLeftMotor;
+    private Double startingHeading;
 
     private ElapsedTime timer;
 
@@ -31,12 +36,12 @@ public class RightBlueParkAuto extends LinearOpMode{
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+                        RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
 
-        frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRight");
-        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        backRightMotor = hardwareMap.get(DcMotorEx.class, "backRight");
-        backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeft");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
+        backRightMotor = hardwareMap.get(DcMotorEx.class, "rearRightMotor");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, "rearLeftMotor");
 
         frontRightMotor.setDirection(com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE);
         frontLeftMotor.setDirection(com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD);
@@ -52,9 +57,15 @@ public class RightBlueParkAuto extends LinearOpMode{
 
         waitForStart();
 
-        driveByTime(-0.5, 0, 0,1);
-        rotate(0);
-        telemetry.addData("heading", getHeading());
+        telemetry.addData("starting heading", startingHeading);
+        rotate(-170);
+//        driveByTime(-0.5, 0, 0,1);
+//        rotate(0);
+
+//        while (opModeIsActive() && !isStopRequested()) {
+//            telemetry.addData("heading", getHeading());
+//            telemetry.update();
+//        }
     }
 
     private void drive(double forward, double strafe, double turn){
@@ -83,16 +94,19 @@ public class RightBlueParkAuto extends LinearOpMode{
 
     private void rotate(double targetDegree){
         double startingHeading = getHeading();
+        while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, 0.6); }
+        while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, 0.2); }
+        drive(0, 0, 0);
 
-        if (Math.abs(startingHeading - targetDegree) < 180)  {
-            //turn counter-clockwise
-            while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, 0.6); }
-            while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, 0.2); }
-        } else {
-            //turn clockwise
-            while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, -0.6); }
-            while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, -0.2); }
-        }
+//        if (Math.abs(startingHeading - targetDegree) < 180)  {
+//            //turn counter-clockwise
+//            while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, 0.6); }
+//            while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, 0.2); }
+//        } else {
+//            //turn clockwise
+//            while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, -0.6); }
+//            while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, -0.2); }
+//        }
     }
 
     private double getHeading() {
