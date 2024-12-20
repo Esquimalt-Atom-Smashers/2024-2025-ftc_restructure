@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
-import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,7 +20,7 @@ public class RightBlueParkAuto extends LinearOpMode{
     private DcMotorEx frontLeftMotor;
     private DcMotorEx backRightMotor;
     private DcMotorEx backLeftMotor;
-    private Double startingHeading;
+
 
     private ElapsedTime timer;
 
@@ -55,17 +51,26 @@ public class RightBlueParkAuto extends LinearOpMode{
 
         imu.resetYaw();
 
+        while (opModeInInit()) {
+            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
+            telemetry.update();
+        }
+
         waitForStart();
 
-        telemetry.addData("starting heading", startingHeading);
-        rotate(-170);
-//        driveByTime(-0.5, 0, 0,1);
-//        rotate(0);
+        telemetry.addData("heading", getHeading());
+        telemetry.update();
 
-//        while (opModeIsActive() && !isStopRequested()) {
-//            telemetry.addData("heading", getHeading());
-//            telemetry.update();
-//        }
+        rotate(-90);
+        sleep(50);
+
+        driveByTime(-0.5, 0, 0, 1);
+        sleep(50);
+
+        rotate(0);
+        sleep(1000);
+
+
     }
 
     private void drive(double forward, double strafe, double turn){
@@ -94,19 +99,29 @@ public class RightBlueParkAuto extends LinearOpMode{
 
     private void rotate(double targetDegree){
         double startingHeading = getHeading();
-        while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, 0.6); }
-        while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, 0.2); }
-        drive(0, 0, 0);
 
-//        if (Math.abs(startingHeading - targetDegree) < 180)  {
-//            //turn counter-clockwise
-//            while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, 0.6); }
-//            while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, 0.2); }
-//        } else {
-//            //turn clockwise
-//            while (Math.abs(getHeading() - targetDegree) > 20) { drive(0, 0, -0.6); }
-//            while (Math.abs(getHeading() - targetDegree) >= 1){ drive(0, 0, -0.2); }
-//        }
+        telemetry.addData("heading", getHeading());
+        telemetry.update();
+
+        if (Math.abs(startingHeading - targetDegree) < 180)  {
+            //turn counter-clockwise
+            while (Math.abs(getHeading() - targetDegree) > 40) {
+                drive(0, 0, 0.6);
+            }
+            while (Math.abs(getHeading() - targetDegree) >= 1) {
+                drive(0, 0, 0.2);
+            }
+            drive(0, 0, 0);
+        } else {
+            //turn clockwise
+            while (Math.abs(getHeading() - targetDegree) > 40) {
+                drive(0, 0, 0.6);
+            }
+            while (Math.abs(getHeading() - targetDegree) >= 1) {
+                drive(0, 0, 0.2);
+            }
+            drive(0, 0, 0);
+        }
     }
 
     private double getHeading() {

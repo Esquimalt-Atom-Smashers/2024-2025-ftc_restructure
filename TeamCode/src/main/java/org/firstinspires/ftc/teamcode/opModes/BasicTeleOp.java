@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 @TeleOp(name = "BasicTeleOp-Bosco", group = "Real")
-public class BasicTeleOpBosco extends OpMode{
+public class BasicTeleOp extends OpMode{
     private IMU imu;
     private DcMotorEx frontRightMotor;
     private DcMotorEx frontLeftMotor;
@@ -59,27 +59,27 @@ public class BasicTeleOpBosco extends OpMode{
         timer = new ElapsedTime();
         timer.reset();
 
-        servo = hardwareMap.get(Servo.class, "servo");
+        //servo = hardwareMap.get(Servo.class, "servo");
 
 
-        servo.setPosition(0);
-        telemetry.addData("servo pos", 0);
+//        servo.setPosition(0);
+//        telemetry.addData("servo pos", 0);
     }
 
     public void loop(){
         drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, fieldCentric);
 
-//        if (gamepad1.dpad_right) {
-//            if (fieldCentric) {
-//                fieldCentric = false;
-//            }
-//        }
-//
-//        if (gamepad1.dpad_left) {
-//            if (!fieldCentric) {
-//                fieldCentric = true;
-//            }
-//        }
+        if (gamepad1.dpad_right) {
+            if (fieldCentric) {
+                fieldCentric = false;
+            }
+        }
+
+        if (gamepad1.dpad_left) {
+            if (!fieldCentric) {
+                fieldCentric = true;
+            }
+        }
 
         if (gamepad1.back) {imu.resetYaw();}
 
@@ -91,19 +91,19 @@ public class BasicTeleOpBosco extends OpMode{
                 else {speedMultiplier = 1;}
             }
         }
-        if(gamepad1.dpad_right) {
-            // move to 0 degrees.
-            servo.setPosition(0);
-            telemetry.addData("servo pos", 0);
-        } else if (gamepad1.dpad_up) {
-            // move to 90 degrees.
-            servo.setPosition(0.5);
-            telemetry.addData("servo pos", 0.5);
-        } else if (gamepad1.dpad_left) {
-            // move to 180 degrees.
-            servo.setPosition(1);
-            telemetry.addData("servo pos", 1);
-        }
+//        if(gamepad1.dpad_right) {
+//            // move to 0 degrees.
+//            servo.setPosition(0);
+//            telemetry.addData("servo pos", 0);
+//        } else if (gamepad1.dpad_up) {
+//            // move to 90 degrees.
+//            servo.setPosition(0.5);
+//            telemetry.addData("servo pos", 0.5);
+//        } else if (gamepad1.dpad_left) {
+//            // move to 180 degrees.
+//            servo.setPosition(1);
+//            telemetry.addData("servo pos", 1);
+//        }
         heading = getHeading();
 
         telemetry.addData("heading", heading);
