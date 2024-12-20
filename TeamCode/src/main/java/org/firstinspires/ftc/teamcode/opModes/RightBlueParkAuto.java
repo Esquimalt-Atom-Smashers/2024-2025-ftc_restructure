@@ -61,10 +61,13 @@ public class RightBlueParkAuto extends LinearOpMode{
         telemetry.addData("heading", getHeading());
         telemetry.update();
 
+        driveByTime(0.1, 0, 0, 0.5);
+        sleep(50);
+
         rotate(-90);
         sleep(50);
 
-        driveByTime(-0.5, 0, 0, 1);
+        driveByTime(0, -0.5, 0, 1);
         sleep(50);
 
         rotate(0);
@@ -100,10 +103,9 @@ public class RightBlueParkAuto extends LinearOpMode{
     private void rotate(double targetDegree){
         double startingHeading = getHeading();
 
-        telemetry.addData("heading", getHeading());
-        telemetry.update();
+        double angleDifference = targetDegree - startingHeading;
 
-        if (Math.abs(startingHeading - targetDegree) < 180)  {
+        if ( Math.abs(angleDifference) < 180 && (angleDifference) > 0)  {
             //turn counter-clockwise
             while (Math.abs(getHeading() - targetDegree) > 40) {
                 drive(0, 0, 0.6);
@@ -115,10 +117,10 @@ public class RightBlueParkAuto extends LinearOpMode{
         } else {
             //turn clockwise
             while (Math.abs(getHeading() - targetDegree) > 40) {
-                drive(0, 0, 0.6);
+                drive(0, 0, -0.6);
             }
             while (Math.abs(getHeading() - targetDegree) >= 1) {
-                drive(0, 0, 0.2);
+                drive(0, 0, -0.2);
             }
             drive(0, 0, 0);
         }

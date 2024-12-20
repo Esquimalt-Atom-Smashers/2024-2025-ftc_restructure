@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
-@TeleOp(name = "BasicTeleOp-Bosco", group = "Real")
+@TeleOp(name = "BasicTeleOp", group = "Real")
 public class BasicTeleOp extends OpMode{
     private IMU imu;
     private DcMotorEx frontRightMotor;
@@ -108,7 +108,7 @@ public class BasicTeleOp extends OpMode{
 
         telemetry.addData("heading", heading);
         telemetry.addData("fieldCentric", fieldCentric);
-        telemetry.addData("left y", gamepad1.left_stick_y);
+        telemetry.addData("right x", gamepad1.right_stick_x);
         telemetry.addData("timer", timer.seconds());
         telemetry.addData("speed multiplier", speedMultiplier);
         telemetry.addData("right bumper", gamepad1.right_bumper);
