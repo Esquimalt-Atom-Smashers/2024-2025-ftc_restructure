@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.libs.roadrunner;
+package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
 
@@ -31,18 +31,20 @@ import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.libs.roadrunner.messages.DriveCommandMessage;
-import org.firstinspires.ftc.libs.roadrunner.messages.MecanumCommandMessage;
-import org.firstinspires.ftc.libs.roadrunner.messages.MecanumLocalizerInputsMessage;
-import org.firstinspires.ftc.libs.roadrunner.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
+import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -50,16 +52,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public class Mecanum20025 {
+public final class MecanumDrive {
     public static class Params {
+        // IMU orientation
+        // TODO: fill in these values based on
+        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
+        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+
         // drive model parameters
-        public double inPerTick = 0.0007019073876;
-        public double lateralInPerTick = 0.0004312645731763228;
-        public double trackWidthTicks = 5661.944075890928;
+        public double inPerTick = 0.000105;//rev:theoretical
+        public double lateralInPerTick = inPerTick;
+        public double trackWidthTicks = 11827;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.7751270382400555;
-        public double kV = 0.00014423873810900744;
+        public double kS = 0.7;
+        public double kV = 0.00015;
         public double kA = 0;
 
         // path profile parameters (in inches)
@@ -121,12 +131,15 @@ public class Mecanum20025 {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(Mecanum20025.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(Mecanum20025.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(Mecanum20025.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(Mecanum20025.this.rightFront));
+            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
+            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
+            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
+            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
 
             imu = lazyImu.get();
+
+            // TODO: reverse encoders if needed
+            //   leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
         @Override
@@ -193,7 +206,7 @@ public class Mecanum20025 {
         }
     }
 
-    public Mecanum20025(HardwareMap hardwareMap, Pose2d pose) {
+    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -202,26 +215,32 @@ public class Mecanum20025 {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.FRONT_LEFT_MOTOR_NAME);
-        leftBack = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.BACK_LEFT_MOTOR_NAME);
-        rightBack = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.BACK_RIGHT_MOTOR_NAME);
-        rightFront = hardwareMap.get(DcMotorEx.class, RoadrunnerConstants.FRONT_RIGHT_MOTOR_NAME);
+        // TODO: make sure your config has motors with these names (or change them)
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
+        leftBack = hardwareMap.get(DcMotorEx.class, "rearLeftMotor");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rearRightMotor");
+        rightFront = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setDirection(RoadrunnerConstants.FRONT_LEFT_MOTOR_DIRECTION);
-        leftBack.setDirection(RoadrunnerConstants.BACK_LEFT_MOTOR_DIRECTION);
-        rightBack.setDirection(RoadrunnerConstants.BACK_RIGHT_MOTOR_DIRECTION);
-        rightFront.setDirection(RoadrunnerConstants.FRONT_RIGHT_MOTOR_DIRECTION);
+        // TODO: reverse motor directions if needed
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        lazyImu = new LazyImu(hardwareMap, RoadrunnerConstants.IMU_NAME, RoadrunnerConstants.IMU_PARAMETERS_ROADRUNNER);
+        // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
+        //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
+        lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+        localizer = new DriveLocalizer();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
