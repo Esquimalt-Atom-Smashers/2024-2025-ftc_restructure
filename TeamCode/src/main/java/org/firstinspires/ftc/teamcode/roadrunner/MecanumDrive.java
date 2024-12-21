@@ -53,6 +53,9 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+    //Strafe left is positive
+    //turn left is positive
+    //drive forward is positive
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -240,12 +243,15 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new DriveLocalizer();
+        localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
+        //Strafe left is positive
+        //turn left is positive
+        //drive forward is positive
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
 

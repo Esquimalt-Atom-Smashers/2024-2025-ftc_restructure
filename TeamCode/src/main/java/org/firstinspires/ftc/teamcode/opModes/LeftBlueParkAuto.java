@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
 @Autonomous(name = "LeftBlueParkAuto (by time)", group = "Real")
-public class RightBlueParkAuto extends LinearOpMode{
+public class LeftBlueParkAuto extends LinearOpMode{
     private IMU imu;
     private DcMotorEx frontRightMotor;
     private DcMotorEx frontLeftMotor;
