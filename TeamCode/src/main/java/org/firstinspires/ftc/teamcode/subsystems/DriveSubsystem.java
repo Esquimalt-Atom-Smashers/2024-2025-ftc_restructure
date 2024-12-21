@@ -22,6 +22,7 @@ import org.firstinspires.ftc.libs.roadrunner.Mecanum20025;
 import org.firstinspires.ftc.libs.roadrunner.RoadrunnerConstants;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.utils.GamepadUtils;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -73,37 +74,72 @@ public class DriveSubsystem extends SubsystemBase {
         resetEncoders();
     }
 
-    public void drive(double forward, double strafe, double turn) {
-        if(fieldCentric) driveFieldCentric(forward, strafe, turn);
-        else driveRobotCentric(forward, strafe, turn);
-        roadrunnerDrive.updatePoseEstimate();
-        updatedPose = new Pose2d(roadrunnerDrive.pose.position.x, roadrunnerDrive.pose.position.y, roadrunnerDrive.pose.heading.toDouble());
-    }
+//    public void drive(double forward, double strafe, double turn) {
+//        if(fieldCentric) driveFieldCentric(forward, strafe, turn);
+//        else driveRobotCentric(forward, strafe, turn);
+//        roadrunnerDrive.updatePoseEstimate();
+//        updatedPose = new Pose2d(roadrunnerDrive.pose.position.x, roadrunnerDrive.pose.position.y, roadrunnerDrive.pose.heading.toDouble());
+//    }
+//
+//    private void driveFieldCentric(double forward, double strafe, double turn) {
+//        forward = GamepadUtils.deadzone(forward, DEADZONE);
+//        strafe = GamepadUtils.deadzone(strafe, DEADZONE);
+//        turn = GamepadUtils.deadzone(turn, DEADZONE);
+//
+//        double gyroRadians = Math.toRadians(-getHeading());
+//        double fieldCentricStrafe = strafe * Math.cos(gyroRadians) - forward * Math.sin(gyroRadians);
+//        double fieldCentricDrive = strafe * Math.sin(gyroRadians) + forward * Math.cos(gyroRadians);
+//
+//        frontLeftMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
+//        frontRightMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe - turn), -1, 1) * speedMultiplier);
+//        backLeftMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
+//        backRightMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe - turn), -1, 1) * speedMultiplier);
+//    }
+//
+//    private void driveRobotCentric(double forward, double strafe, double turn) {
+//        forward = GamepadUtils.deadzone(forward, DEADZONE);
+//        strafe = GamepadUtils.deadzone(strafe, DEADZONE);
+//        turn = GamepadUtils.deadzone(turn, DEADZONE);
+//
+//        frontLeftMotor.setPower(Range.clip((forward + strafe + turn), -1, 1) * speedMultiplier);
+//        frontRightMotor.setPower(Range.clip((forward - strafe - turn), -1, 1) * speedMultiplier);
+//        backLeftMotor.setPower(Range.clip((forward - strafe + turn), -1, 1) * speedMultiplier);
+//        backRightMotor.setPower(Range.clip((forward + strafe - turn), -1, 1) * speedMultiplier);
+//    }
+private void drive(double forward, double strafe, double turn, boolean fieldCentricBool){
+    final double DEADZONE = 0.1;
 
-    private void driveFieldCentric(double forward, double strafe, double turn) {
-        forward = GamepadUtils.deadzone(forward, DEADZONE);
-        strafe = GamepadUtils.deadzone(strafe, DEADZONE);
-        turn = GamepadUtils.deadzone(turn, DEADZONE);
+    forward = Math.abs(forward) >= DEADZONE ? forward : 0;
+    strafe = Math.abs(strafe) >= DEADZONE ? strafe : 0;
+    turn = Math.abs(turn) >= DEADZONE ? turn : 0;
+
+    if (fieldCentric) {
 
         double gyroRadians = Math.toRadians(-getHeading());
         double fieldCentricStrafe = strafe * Math.cos(gyroRadians) - forward * Math.sin(gyroRadians);
         double fieldCentricDrive = strafe * Math.sin(gyroRadians) + forward * Math.cos(gyroRadians);
 
-        frontLeftMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
-        frontRightMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe - turn), -1, 1) * speedMultiplier);
-        backLeftMotor.setPower(Range.clip((fieldCentricDrive - fieldCentricStrafe + turn), -1, 1) * speedMultiplier);
-        backRightMotor.setPower(Range.clip((fieldCentricDrive + fieldCentricStrafe - turn), -1, 1) * speedMultiplier);
+        frontRightMotor.setPower(scaleInput(fieldCentricDrive - fieldCentricStrafe - turn) * speedMultiplier);
+        frontLeftMotor.setPower (scaleInput(fieldCentricDrive + fieldCentricStrafe + turn) * speedMultiplier);
+        backRightMotor.setPower (scaleInput(fieldCentricDrive + fieldCentricStrafe - turn) * speedMultiplier);
+        backLeftMotor.setPower  (scaleInput(fieldCentricDrive - fieldCentricStrafe + turn) * speedMultiplier);
+
+    } else {
+        frontRightMotor.setPower(scaleInput(forward - strafe - turn) * speedMultiplier);
+        frontLeftMotor.setPower (scaleInput(forward + strafe + turn) * speedMultiplier);
+        backRightMotor.setPower (scaleInput(forward + strafe - turn) * speedMultiplier);
+        backLeftMotor.setPower  (scaleInput(forward - strafe + turn) * speedMultiplier);
+    }
+}
+
+
+    private double scaleInput(double input){
+        return Range.clip(input,-1,1);
     }
 
-    private void driveRobotCentric(double forward, double strafe, double turn) {
-        forward = GamepadUtils.deadzone(forward, DEADZONE);
-        strafe = GamepadUtils.deadzone(strafe, DEADZONE);
-        turn = GamepadUtils.deadzone(turn, DEADZONE);
-
-        frontLeftMotor.setPower(Range.clip((forward + strafe + turn), -1, 1) * speedMultiplier);
-        frontRightMotor.setPower(Range.clip((forward - strafe - turn), -1, 1) * speedMultiplier);
-        backLeftMotor.setPower(Range.clip((forward - strafe + turn), -1, 1) * speedMultiplier);
-        backRightMotor.setPower(Range.clip((forward + strafe - turn), -1, 1) * speedMultiplier);
+    private double getHeading() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
     }
 
     public void goForNetZone(){
@@ -160,10 +196,6 @@ public class DriveSubsystem extends SubsystemBase {
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    private double getHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     public double getSpeedMultiplier() {

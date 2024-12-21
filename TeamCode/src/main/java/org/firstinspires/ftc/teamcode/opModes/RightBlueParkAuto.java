@@ -61,7 +61,7 @@ public class RightBlueParkAuto extends LinearOpMode{
         telemetry.addData("heading", getHeading());
         telemetry.update();
 
-        driveByTime(0.1, 0, 0, 0.5);
+        driveByTime(-0.1, 0, 0, 0.7);
         sleep(50);
 
         rotate(-90);

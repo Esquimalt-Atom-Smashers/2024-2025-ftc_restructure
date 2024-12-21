@@ -53,9 +53,9 @@ public class Robot {
 
         //Driver Controls
 
-        RunCommand defaultDriveCommand = new RunCommand(() -> driveSubsystem.drive(driverGamepad.getLeftY(), driverGamepad.getLeftX(), driverGamepad.getRightX()));
-        defaultDriveCommand.addRequirements(driveSubsystem);
-        driveSubsystem.setDefaultCommand(defaultDriveCommand);
+//        RunCommand defaultDriveCommand = new RunCommand(() -> driveSubsystem.drive(driverGamepad.getLeftY(), driverGamepad.getLeftX(), driverGamepad.getRightX(), true));
+//        defaultDriveCommand.addRequirements(driveSubsystem);
+//        driveSubsystem.setDefaultCommand(defaultDriveCommand);
 
         Trigger speedVariationTrigger = new Trigger(() -> driverGamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER));
         speedVariationTrigger.whenActive(() -> driveSubsystem.setSpeedMultiplier(0.2));
